@@ -1,5 +1,5 @@
 /*
-	jQuery parralax band plugin - giving depth to outstanding titles since 2014.
+	jQuery parallax band plugin - giving depth to outstanding titles since 2014.
 	Copyright (c) 2014 Roman Steiner <roman@toastlab.ch>
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -127,7 +127,8 @@
 				position: 'relative',
 				lineHeight: height + 'px',
 				padding: '0 20px',
-				background: forecolor
+				background: forecolor,
+				verticalAlign: 'middle'
 			});
 			$inner.attr({
 				'data-bottom': 'top:' + (vOffset) +'px',
