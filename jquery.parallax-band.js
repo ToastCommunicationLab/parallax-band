@@ -22,7 +22,7 @@
  */
 
 (function($) {
-	function makeband(top, left, bandcolor, edgecolor, hInset, vOffset, height) {
+	function makeband(top, left, bandcolor, edgecolor, hInset, vOffset, height, length, fancy) {
 		var $b = $('<span>'); 
 		var $child = $('<span>');
 		
@@ -36,7 +36,7 @@
 		
 		$child.css({
 			display: 'block',
-		    width: '9999px',
+		    width: length + 'px',
 		    position: 'absolute',
 		    height: height + 'px',
 		    background: bandcolor
@@ -87,9 +87,55 @@
 				top: '0px'
 			});
 		}
-		
+		if(fancy) {
+			addFancyEdge($child, left, bandcolor, height / 2);
+		}
 		$b.append($child);
 		return $b;
+	}
+	
+	function addFancyEdge($band, left, color, width) {
+		var $t1 = $('<span>');
+		var $t2 = $('<span>');
+		width = Math.floor(width);
+		$t1.css({
+			width: 0,
+			height: 0,
+			position: 'absolute',
+			borderColor: 'transparent',
+			borderTop: width + 'px solid ' + color,
+			top: 0
+		});
+		$t2.css({
+			width: 0,
+			height: 0,
+			position: 'absolute',
+			borderColor: 'transparent',
+			borderBottom: width + 'px solid ' + color,
+			bottom: 0
+		});
+		
+		if(left) {
+			$t1.css({
+				borderLeft: width + 'px solid transparent',
+				left: -width
+			});
+			$t2.css({
+				borderLeft: width + 'px solid transparent',
+				left: -width
+			}); 
+			$band.prepend($t1, $t2);
+		} else {
+			$t1.css({
+				borderRight: width + 'px solid transparent',
+				right: -width
+			});
+			$t2.css({
+				borderRight: width + 'px solid transparent',
+				right: -width
+			}); 
+			$band.append($t1, $t2);
+		}
 	}
 	
 	$.fn.parallaxBand = function(options) {
@@ -99,7 +145,11 @@
 			forecolor:'#E4E4E4',
 			vOffset: 40,
 			hInset: 30,
-			height: 80
+			height: 80,
+			left: true,
+			right: true,
+			rightLength: 9999,
+			leftLength: 9999
 		};
 		
 		options = $.extend({}, defaults, options); 
@@ -121,6 +171,7 @@
 				paddingTop: vOffset + 'px',
 				overflow: 'hidden'
 			});
+			
 			$inner.css({
 				display: 'inline-block',
 				top: -vOffset + 'px',
@@ -132,27 +183,40 @@
 			});
 			$inner.attr({
 				'data-bottom': 'top:' + (vOffset) +'px',
-				'data-top': 'top:' + (-vOffset) +'px'
+				'data-top': 'top:' + (-vOffset) +'px',
+				'class': 'inner-wrapper'
 			});
-			var $upper_before = makeband(false, true, bandcolor, edgecolor, hInset, vOffset, height);
-			var $upper_after = makeband(false, false, bandcolor, edgecolor, hInset, vOffset, height);
-			
-			var $lower_before = makeband(true, true, bandcolor, edgecolor, hInset, vOffset, height);
-			var $lower_after = makeband(true, false, bandcolor, edgecolor, hInset, vOffset, height);
+			if(options.left !== false) {
+				var $upper_before = makeband(false, true, bandcolor, edgecolor, hInset, vOffset, height, options.leftLength, options.left == 'fancy');
+				var $lower_before = makeband(true, true, bandcolor, edgecolor, hInset, vOffset, height, options.leftLength, options.left == 'fancy');
+			}
+			if(options.right !== false) {
+				var $upper_after = makeband(false, false, bandcolor, edgecolor, hInset, vOffset, height, options.rightLength, options.right == 'fancy');
+				var $lower_after = makeband(true, false, bandcolor, edgecolor, hInset, vOffset, height, options.rightLength, options.right == 'fancy');
+			}
 			
 			var update = function() {
 				var st = $(window).scrollTop() + $(window).innerHeight() / 2;
-				var it = $inner.position().top + height / 2;
+				var it = $inner.offset().top + height / 2;
 				if(st > it) {
-					$upper_before.css('visibility', 'visible');
-					$upper_after.css('visibility', 'visible');
-					$lower_before.css('visibility', 'hidden');
-					$lower_after.css('visibility', 'hidden');
+					
+					if(options.left !== false) {
+						$upper_before.css('visibility', 'visible');
+						$lower_before.css('visibility', 'hidden');
+					}
+					if(options.right !== false) {
+						$upper_after.css('visibility', 'visible');
+						$lower_after.css('visibility', 'hidden');
+					}
 				} else {
-					$upper_before.css('visibility', 'hidden');
-					$upper_after.css('visibility', 'hidden');
-					$lower_before.css('visibility', 'visible');
-					$lower_after.css('visibility', 'visible');
+					if(options.left !== false) {
+						$upper_before.css('visibility', 'hidden');
+						$lower_before.css('visibility', 'visible');
+					}
+					if(options.right !== false) {
+						$upper_after.css('visibility', 'hidden');
+						$lower_after.css('visibility', 'visible');
+					}
 				}
 			};
 			
