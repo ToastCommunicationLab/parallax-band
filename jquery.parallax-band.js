@@ -149,7 +149,8 @@
 			left: true,
 			right: true,
 			rightLength: 9999,
-			leftLength: 9999
+			leftLength: 9999,
+			customizeBand: undefined
 		};
 		
 		options = $.extend({}, defaults, options); 
@@ -189,17 +190,24 @@
 			if(options.left !== false) {
 				var $upper_before = makeband(false, true, bandcolor, edgecolor, hInset, vOffset, height, options.leftLength, options.left == 'fancy');
 				var $lower_before = makeband(true, true, bandcolor, edgecolor, hInset, vOffset, height, options.leftLength, options.left == 'fancy');
+				if(options.customizeBand) {
+					options.customizeBand.call($this, $upper_before, 'upper', 'left');
+					options.customizeBand.call($this, $lower_before, 'lower', 'left');
+				}
 			}
 			if(options.right !== false) {
 				var $upper_after = makeband(false, false, bandcolor, edgecolor, hInset, vOffset, height, options.rightLength, options.right == 'fancy');
 				var $lower_after = makeband(true, false, bandcolor, edgecolor, hInset, vOffset, height, options.rightLength, options.right == 'fancy');
+				if(options.customizeBand) {
+					options.customizeBand.call($this, $upper_after, 'upper', 'right');
+					options.customizeBand.call($this, $lower_after, 'lower', 'right');
+				}
 			}
 			
 			var update = function() {
 				var st = $(window).scrollTop() + $(window).innerHeight() / 2;
 				var it = $inner.offset().top + height / 2;
 				if(st > it) {
-					
 					if(options.left !== false) {
 						$upper_before.css('visibility', 'visible');
 						$lower_before.css('visibility', 'hidden');
@@ -211,8 +219,7 @@
 				} else {
 					if(options.left !== false) {
 						$upper_before.css('visibility', 'hidden');
-						$lower_before.css('visibility', 'visible');
-					}
+						$lower_before.css('visibility', 'visible');					}
 					if(options.right !== false) {
 						$upper_after.css('visibility', 'hidden');
 						$lower_after.css('visibility', 'visible');
