@@ -1,0 +1,26 @@
+{
+  "name": "parallax-band",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ToastCommunicationLab/parallax-band",
+  "authors": [
+    "Roman Steiner <roman@toastlab.ch>"
+  ],
+  "description": "provides a parallax effect for block level titles",
+  "main": "jquery.parallax-band.js",
+  "keywords": [
+    "jquery",
+    "parallax"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "skrollr": "~0.6.24",
+    "jquery": "~2.1.0"
+  }
+}
